@@ -1,0 +1,160 @@
+//https://dbdiagram.io/d/641714e7296d97641d891182
+
+Table users {
+  id bigint [pk]
+  nickname varchar //회원아이디
+  status varchar //회원상태(일반, 탈퇴, 휴먼, ...)
+  role varchar //권한(관리자, 사용자)
+  grade varchar //등급(일반, 프렌즈, ...)
+  name varchar //회원명
+  email varchar //이메일
+  default_delivery_address_id bigint //기본배송지
+  mobile_number varchar //휴대폰번호
+  birthday datetime //생일
+  gender varchar //성별(NONE, MALE, FEMALE)
+  password varchar //비밀번호
+  created_at datetime
+  updated_at datetime
+}
+
+Table addresses {
+  id bigint [pk]
+  user_id bigint
+  //is_base_delivery_address boolean //기본배송지여부
+  //delivery_policy varchar //배송정책(새벽배송, 낮배송, 배송불가)
+  address varchar //기본주소
+  address_detail varchar //상세주소
+  zip_code varchar //우편번호
+  created_at datetime
+  updated_at datetime
+}
+
+Table carts {
+  id bigint [pk]
+  user_id bigint
+  created_at datetime
+  updated_at datetime
+}
+
+Table cart_product {
+  id bigint [pk]
+  cart_id bigint
+  product_id bigint
+  quantity int //수량
+  product_price bigdecimal //가격
+  created_at datetime
+  updated_at datetime
+}
+
+Table reserves {
+  id bigint [pk]
+  user_id bigint
+  order_id bigint
+  is_valid boolean //적립금사용가능여부
+  amount bigdecimal //적립금
+  created_at datetime
+  updated_at datetime
+}
+
+Table orders {
+  id bigint [pk]
+  user_id bigint
+  delivery_id bigint
+  status varchar //주문상태(주문완료, 주문취소, 주문불가)
+  created_at datetime
+  updated_at datetime
+}
+
+Table order_product {
+  id bigint [pk]
+  order_id bigint
+  product_id bigint
+  quantity int //수량
+  product_price bigdecimal //가격
+  created_at datetime
+  updated_at datetime
+}
+
+Table storages {
+  id bigint  [pk]
+  type varchar //보관타입(냉장, 냉동, 상온)
+  created_at datetime
+  updated_at datetime
+}
+
+Table products {
+  id bigint  [pk] //상세 상품 pk
+  storage_id bigint //보관 pk
+  seller_id bigint //판매자 pk
+  product_no bigint //상품 번호
+  short_description varchar //상품 설명
+  allergy varchar //알레르기 정보
+  delivery_type_name json //배송 타입
+  expiration_date datetime //유통기한
+  main_image_url varchar //이미지 URL 주소
+  created_at datetime
+  updated_at datetime
+}
+
+Table sub_product {
+  id bigint  [pk] //상품 번호
+  product_id bigint
+  category_id bigint //카테고리 ID
+  name varchar //상품이름
+  brand varchar //브랜드 이름
+  tag json //태그 목록들
+  base_price bigdecimal //상품 기본 가격
+  retail_price bigdecimal //소매가격
+  discount_rate int //할인율
+  dicounted_price bigdecimal //할인금액
+  restock int //재고량
+  can_restock_notify boolean //남은 재고 여부
+  min_quantity int //최소주문수량
+  max_quantity int //최대주문수량
+  is_sold_out boolean //상품이 다팔렸는지 여부
+  is_purchase_status boolean //상품 구매 가능 여부
+  is_expected_point boolean //적립여부
+  created_at datetime
+  updated_at datetime
+}
+
+Table categories {
+  id bigint [pk]
+  name varchar //카테고리명
+  created_at datetime
+  updated_at datetime
+}
+
+Table deliveries {
+  id bigint [pk]
+  address_id bigint
+  status varchar //배송상태
+  //address varchar //기본주소
+  //address_detail varchar //상세주소
+  //zip_code varchar //우편번호
+  created_at datetime
+  updated_at datetime
+}
+
+Table sellers {
+  id bigint [pk]
+  name string
+  created_at datetime
+  updated_at datetime
+}
+
+Ref: addresses.user_id > users.id //many-to-one
+Ref: reserves.user_id > users.id //many-to-one
+//Ref: reserves.order_id - orders.id //one-to-one
+Ref: carts.user_id - users.id //one-to-one
+Ref: cart_product.cart_id > carts.id //many-to-one
+Ref: cart_product.product_id > products.id //many-to-one
+Ref: orders.user_id > users.id //many-to-one
+Ref: orders.delivery_id - deliveries.id //one-to-one
+Ref: order_product.order_id > orders.id  //many-to-one
+Ref: order_product.product_id > products.id //many-to-one
+Ref: sub_product.category_id > categories.id //many-to-one
+Ref: sub_product.product_id > products.id //many-to-one
+Ref: products.storage_id - storages.id //one-to-one
+Ref: products.seller_id > sellers.id //many-to-one
+//Ref: deliveries.address_id - addresses.id //one-to-one

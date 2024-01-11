@@ -1,0 +1,12 @@
+== 회원(Users)
+
+회원에 대한 기능을 제공합니다.
+
+//=== 테스트
+//operation::rest-docs-test/rest-docs-test[]
+
+=== 회원가입
+operation::user-controller-test/sign-up[snippets='http-request,http-response,request-fields,response-fields']
+
+=== 로그인
+operation::user-controller-test/sign-in[snippets='http-request,http-response,request-fields,response-fields']
